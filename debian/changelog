@@ -1,3 +1,9 @@
+isc-dhcp (4.4.1-2.1) UNRELEASED; urgency=medium
+
+  * Add non-authenticated DHCPFORCERENEW handler
+
+ -- John Estabrook <jestabro@vyos.io>  Mon, 25 Jan 2021 19:37:40 -0600
+
 isc-dhcp (4.4.1-2) unstable; urgency=medium
 
   * Set initial address to 0.0.0.0 on hurd (closes: #875566).
