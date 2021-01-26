@@ -1,0 +1,3 @@
+usr/sbin/dhcpd
+
+debian/dhcpd.conf etc/dhcp
