@@ -1,3 +1,9 @@
+isc-dhcp (4.3.1-6+deb8u4.1) UNRELEASED; urgency=medium
+
+  * Add non-authenticated DHCPFORCERENEW handler
+
+ -- John Estabrook <jestabro@vyos.io>  Fri, 29 Jan 2021 12:46:01 -0600
+
 isc-dhcp (4.3.1-6+deb8u4) jessie-security; urgency=high
 
   * Non-maintainer upload by the LTS Team. 
