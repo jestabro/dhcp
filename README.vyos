@@ -1,0 +1,60 @@
+
+The script below is based on the one provided by Taras. Run from a DHCP
+server, it will send a forcerenew message to the client, of the same
+signature as that in the pcap file provided by RazorSecure.
+
+To run, just update the script with appropriate client_ip, server_ip.
+
+The script requires the package python3-scapy, available for buster; for
+testing with both the VyOS 1.2.6 and 1.4 dhcp client, a 1.4 VyOS server with
+python3-scapy and resident isc-dhcp-server was used.
+
+isc-dhcp recently moved from github to gitlab hosting, however for our
+purposes the github repo is convenient and sufficient, as it contains both
+the buster (4.4.1) and jessie (4.3.1) isc-dhcp-client release source.
+
+The github repo is forked at
+
+https://github.com/jestabro/dhcp
+
+with branches
+
+forcerenew-v4.3.1 for VyOS 1.2.6
+
+and
+
+forcerenew-v4.4.1 for VyOS current
+
+Those branches contain an implementation of a DHCPFORCERENEW handler;
+further review pending.
+
+Script to be run on DHCP server for basic test:
+
+#!/usr/bin/env python3
+import socket
+from binascii import unhexlify
+from scapy.all import *
+
+# configuration
+
+# DHCP client IP
+client_ip = '192.168.0.25'
+
+# DHCP server IP
+server_ip = '192.168.0.1'
+
+# find client MAC
+answer, _ = arping(client_ip)
+client_mac_resolved = answer[0][1][ARP].hwsrc.lower()
+client_mac = unhexlify(client_mac_resolved.replace(":", ""))
+
+# prepare and send a packet
+dhcp_options = [
+    ('message-type', 'force_renew'),
+    ('server_id', server_ip),
+    'end'
+    ]
+
+dhcp_force_release_packet = IP(src=server_ip, dst=client_ip)/UDP(sport=67, dport=68)/BOOTP(op=2, htype=1, hlen=6, hops=0, xid=random.randint(0, 0xFFFFFFFF), secs=0, chaddr=client_mac)/DHCP(options=dhcp_options)
+
+send(dhcp_force_release_packet)
