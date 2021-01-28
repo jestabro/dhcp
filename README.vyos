@@ -1,9 +1,9 @@
 
-The script below (modulo byte order adjustment for isc-dhcp) was provided by
-Taras. Run from a DHCP server, it will send a forcerenew message to the
-client, identified by an xid recovered from the client system logs on
-isc-dhcp-client (dhclient) start up; just update the script with appropriate
-client_ip, server_ip, xid.
+The script below is based on the one provided by Taras. Run from a DHCP
+server, it will send a forcerenew message to the client, of the same
+signature as that in the pcap file provided by RazorSecure.
+
+To run, just update the script with appropriate client_ip, server_ip.
 
 The script requires the package python3-scapy, available for buster; for
 testing with both the VyOS 1.2.6 and 1.4 dhcp client, a 1.4 VyOS server with
@@ -25,8 +25,8 @@ and
 
 forcerenew-v4.4.1 for VyOS current
 
-Those branches currently contain a basic implementation of a DHCPFORCERENEW
-handler; further review pending.
+Those branches contain an implementation of a DHCPFORCERENEW handler;
+further review pending.
 
 Script to be run on DHCP server for basic test:
 
@@ -39,12 +39,10 @@ from scapy.all import *
 
 # DHCP client IP
 client_ip = '192.168.0.25'
+
 # DHCP server IP
 server_ip = '192.168.0.1'
-# xid, should be extracted from system logs of host running dhclient
-xid = 0x6d4885fe
-# isc-dhcp-client expects network byte order
-xid = socket.htonl(xid)
+
 # find client MAC
 answer, _ = arping(client_ip)
 client_mac_resolved = answer[0][1][ARP].hwsrc.lower()
@@ -53,9 +51,10 @@ client_mac = unhexlify(client_mac_resolved.replace(":", ""))
 # prepare and send a packet
 dhcp_options = [
     ('message-type', 'force_renew'),
+    ('server_id', server_ip),
     'end'
     ]
 
-dhcp_force_release_packet = IP(src=server_ip, dst=client_ip)/UDP(sport=67, dport=68)/BOOTP(op=2, htype=1, hlen=6, hops=0, xid=xid, secs=0, ciaddr=client_ip, yiaddr=client_ip, siaddr=server_ip, chaddr=client_mac)/DHCP(options=dhcp_options)
+dhcp_force_release_packet = IP(src=server_ip, dst=client_ip)/UDP(sport=67, dport=68)/BOOTP(op=2, htype=1, hlen=6, hops=0, xid=random.randint(0, 0xFFFFFFFF), secs=0, chaddr=client_mac)/DHCP(options=dhcp_options)
 
 send(dhcp_force_release_packet)
