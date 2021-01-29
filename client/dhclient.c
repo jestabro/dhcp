@@ -1868,6 +1868,9 @@ void dhcpnak (packet)
 	state_init (client);
 }
 
+
+/* Define a non-authenticated DHCPFORCERENEW handler */
+
 void dhcpforcerenew (packet)
 	struct packet *packet;
 {
