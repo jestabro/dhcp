@@ -1900,6 +1900,7 @@ void dhcpforcerenew_request (client)
 	}
 	if (client->state != S_BOUND) {
 		log_info ("forcerenew: client not in BOUND state");
+		return;
 	}
 	log_info ("forcerenew: entering the REQUESTING state");
 
