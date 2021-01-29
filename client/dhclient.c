@@ -1903,9 +1903,9 @@ void dhcpforcerenew_request (client)
 	}
 	log_info ("forcerenew: entering the REQUESTING state");
 
-	/* Enter the REQUESTING state. */
+	/* Change state to RENEWING */
 	client->destination = iaddr_broadcast;
-	client->state = S_REQUESTING;
+	client->state = S_RENEWING;
 	client->first_sending = cur_time;
 	client->interval = client->config->initial_interval;
 
