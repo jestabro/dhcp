@@ -1905,7 +1905,7 @@ void dhcpforcerenew_request (client)
 		log_info ("forcerenew: client not in BOUND state");
 		return;
 	}
-	log_info ("forcerenew: entering the REQUESTING state");
+	log_info ("forcerenew: entering the RENEWING state");
 
 	/* Change state to RENEWING */
 	client->destination = iaddr_broadcast;
